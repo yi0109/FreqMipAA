@@ -1,0 +1,91 @@
+model:
+  name: "MipFreqTensorVM"
+  scale_types: null  # must override
+# mask
+  n_masks: 4
+  mask_init: "identity"
+  # mask_init: "random_normal"
+  # mask_init: "identity"
+  learnable_mask: true
+  train_freq_domain: true
+  
+  # grid
+  den_channels: [16, 16, 16]
+  app_channels: [48, 48, 48]
+  # density
+  density_shift: -10
+  density_activation: "softplus"
+  # to_rgb module
+  feat_n_freqs: 2
+  view_n_freqs: 2
+  to_rgb_in_features: 27
+  to_rgb_hidden_features: 128
+  # misc
+  distance_scale: 25
+  alpha_mask_threshold: 0.0001
+  raymarch_weight_threshold: 0.0004
+
+  #frequency
+  force_mask: false
+  force_seperate: false
+  line_freq: false
+  inverse_method: "dct"
+  
+loss:
+  # regularization
+  l1_weight_init: 0.00008
+  l1_weight_rest: 0.00004
+  ortho_weight: 0.0
+  tv_weight_den: 0.0
+  tv_weight_app: 0.0
+  end_lossmult: 1000000000  # 1e9
+
+dataset:
+  name: "multiscale_blender"
+  data_dir: "/home/zeroin7/hdd_workspace/dataset/nerf/nerf_synthetic/lego"
+  n_downsamples: 4
+  downsample: 1.0
+  return_radii: true
+  patch_size: 1
+
+training:
+  # kernel
+  begin_mask: 700
+  # rendering
+  n_samples: 1000000
+  step_ratio: 0.5
+  ndc_ray: false
+  # learning rate
+  lr_grid: 0.02
+  lr_network: 0.001
+  lr_mask: 0.01
+  lr_decay_iters: -1
+  lr_decay_target_ratio: 0.1
+  lr_upsample_reset: true
+  # loader
+  batch_size: 4096
+  n_iters: 40000
+  # grid size
+  n_voxel_init: 2097156     # 128**3
+  # n_voxel_final: 24389000   # 300**3
+  n_voxel_final: 27000000   # 300**3
+  # upsample_list: [500, 1000, 1500, 2000, 2500]
+  # update_alpha_mask_list: [500, 1500]
+  upsample_list: [200, 300, 400, 550, 700]
+  update_alpha_mask_list: [200, 400]
+  # upsample_list: [200, 300, 400, 700, 1000]
+  # update_alpha_mask_list: [200, 400]
+  # misc
+  vis_every: 5000
+  progress_refresh_rate: 10
+  render_train: false
+  render_test: true
+  render_path: false
+  ckpt: null
+
+testing:
+  ndc_ray: false
+  render_train: false
+  render_test: true
+  render_path: false
+  ckpt: null
